@@ -1,5 +1,6 @@
 exports.seed = async function(knex) {
   // Deletes ALL existing entries
+  await knex('shop').del();
   await knex('pokemon').del()
   await knex('pokemon').insert([
 
