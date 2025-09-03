@@ -23,7 +23,7 @@ exports.seed = async function(knex) {
       back_image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
       base_damage: 52,
       base_health: 39,
-     },
+     }
 
   ]);
 };
