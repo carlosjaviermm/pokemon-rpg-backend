@@ -25,11 +25,12 @@ ctr.Signup = () => async (req, res) => {
     const duplicatedUsername = await User.query().where('username', req.body.username)
     const duplicatedEmail = await User.query().where('email', req.body.email)
 
-    if(duplicatedUsername.length > 0){
-      throw new Error('Username already exists')
-    } else if (duplicatedEmail.length > 0){
-      throw new Error ('Account with this email already exists')
-    }
+  if (duplicatedUsername.length > 0) {
+
+     return res.status(400).json({ error: 'Username already exists' })
+  } else if (duplicatedEmail.length > 0) {
+    
+    return res.status(400).json({ error: 'Account with this email already exists' })    }
 
     const users = await User.query().insert({
       username: req.body.username,
