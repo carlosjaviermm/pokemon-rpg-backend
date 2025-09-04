@@ -14,6 +14,7 @@ ctr.Catch = () => async (req, res) => {
   const userExists = await User.query().where('id', user_id)
   const pokemonExists = await Pokemon.query().where('id', pokemon_id)
   const alreadyCaught = await MyPokemon.query().where({user_id, pokemon_id})
+  const teamSize = await MyPokemon.query().where('user_id', user_id)
 
   if(userExists.length === 0) {
     throw new Error('User does not exist')
@@ -25,6 +26,10 @@ ctr.Catch = () => async (req, res) => {
 
   if(alreadyCaught.length > 0){
     throw new Error('You already have that pokemon')
+  }
+
+  if (teamSize.length >=5){
+    throw new Error ('Your team is already full')
   }
 
   await MyPokemon.query().insert({
