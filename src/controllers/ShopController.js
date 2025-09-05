@@ -37,18 +37,34 @@ ctr.buyShopItem = () => async (req, res) => {
     }
 
     if (pokemon_id) {
-      console.log('You are trying to buy a pokemon')
       const pokemonCost = await Shop.query().where({pokemon_id}).select('cost')
+      const alreadyCaught = await MyPokemon.query().where({user_id, pokemon_id, b_active:true})
+      const teamSize = await MyPokemon.query().where({user_id, b_active:true})
+
+      if (teamSize.length >=5){
+        throw new Error ('Your team is already full')
+      }
+
+      if(alreadyCaught.length > 0){
+        throw new Error('You already have that pokemon')
+      }
       
       if (pokemonCost.length === 0) {
         throw new Error('Pokemon does not exist in shop')
       }
+
       if (pokemonCost[0].cost !== cost) {
         throw new Error('Pokemon cost does not match shop cost')
       }
+
       await User.query().findById(user_id).patch({
         coins: coins - cost
       })
+      await MyPokemon.query().insert({
+      user_id,
+      pokemon_id
+    })
+
       return res.status(200).json({message: 'Successfully bought pokemon'})
     } 
     
