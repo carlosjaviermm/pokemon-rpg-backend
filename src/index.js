@@ -4,6 +4,9 @@ const express = require('express'); // Web framework
 const cors = require('cors'); // Allow cross-origin requests
 const db = require('./db'); // Our database connection (we'll build db.js next)
 const usersRouter = require('./routes/users');
+const pokemonRouter = require('./routes/pokemon');
+const shopRouter = require('./routes/shop');
+
 
 // Create Express app
 const app = express();
@@ -21,6 +24,8 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use('/api/users', usersRouter);
+app.use('/api/pokemon', pokemonRouter)
+app.use('/api/shop', shopRouter)
 
 // Start server
 const port = process.env.PORT || 4000;
