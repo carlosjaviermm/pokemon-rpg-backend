@@ -14,7 +14,7 @@ ctr.Catch = () => async (req, res) => {
   const userExists = await User.query().where('id', user_id)
   const pokemonExists = await Pokemon.query().where('id', pokemon_id)
   const alreadyCaught = await MyPokemon.query().where({user_id, pokemon_id, b_active:true})
-  const teamSize = await MyPokemon.query().where('user_id', user_id)
+  const teamSize = await MyPokemon.query().where({user_id, b_active:true})
   const soldPokemon = await MyPokemon.query().where({user_id, pokemon_id, b_active:false})
 
   if(userExists.length === 0) {
