@@ -26,6 +26,7 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/users', usersRouter);
 app.use('/api/pokemon', pokemonRouter)
 app.use('/api/shop', shopRouter)
+app.use('/api/items', require('./routes/items'));
 
 // Start server
 const port = process.env.PORT || 4000;
