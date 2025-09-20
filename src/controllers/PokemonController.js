@@ -52,4 +52,34 @@ ctr.Catch = () => async (req, res) => {
 
 } 
 
+ctr.Sell = () => async (req, res) => {
+  try{
+  const { user_id, pokemon_id } = req.body;
+
+  const userExists = await User.query().where('id', user_id)
+  const pokemonExists = await Pokemon.query().where('id', pokemon_id)
+
+  const ownsPokemon = await MyPokemon.query().where({user_id, pokemon_id, b_active:true})
+
+  if(userExists.length === 0) {
+    throw new Error('User does not exist')
+  }
+
+  if(pokemonExists.length === 0){
+    throw new Error('Pokemon does not exist')
+  }
+
+  if(ownsPokemon.length === 0){
+    throw new Error('You do not own that pokemon')
+  }
+
+  await MyPokemon.query().patch({ b_active: false }).where({user_id, pokemon_id, b_active:true})
+
+  res.status(200).json({message:'Successfully sold pokemon'})
+
+  }catch (error){
+    res.status(500).json({error: error.message})
+  }
+}
+
 module.exports = ctr;
