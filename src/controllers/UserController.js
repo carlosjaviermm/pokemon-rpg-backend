@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Pokemon = require('../models/Pokemon')
+const MyPokemon = require('../models/MyPokemon')
 const req = require('express/lib/request');
 const res = require('express/lib/response');
 const bcrypt = require('bcryptjs')
@@ -58,19 +60,37 @@ ctr.logIn = () => async (req, res) => {
     const userData = await User.query().where('email', email).select(
       'username',
       'email',
-      'password'
+      'password',
+      'coins',
+      'id'
     ).first()
+
+    //Credential validaions
+    if(!userData) {
+      return res.status(404).json({error: '❌ The email you entered is not registered'})
+    } 
 
     const validPassword = await bcrypt.compare(password, userData.password)
 
-    //Credential validaions
-    if(userData.length === 0) {
-      return res.status(404).json({error: 'The email you entered is not registered'})
-    } else if (!validPassword) {
-      return res.status(404).json({error: 'The password you entered is wrong for this account, please double check and try again'})
+    if (!validPassword) {
+      return res.status(401).json({error: '❌ The password you entered is wrong for this account, please double check and try again'})
     }
 
-    res.status(200).json({message: `You have succesfully logged in with the acount ${userData.username}`, currentUser: userData.username})
+    const userPokemon = await MyPokemon.query().where('user_id', userData.id).where('b_active', true).select('pokemon_id', 'health_percentage')
+
+    const pokemonIds = userPokemon.map(p => p.pokemon_id);
+
+    const pokemonTeam = await Pokemon.query().whereIn('id', pokemonIds).select('name', 'id')
+
+    const teamWithHealth = userPokemon.map(p => {
+      const poke = pokemonTeam.find(pt => pt.id === p.pokemon_id);
+      return {
+        name: poke ? poke.name : 'Unknown',
+        healthPercentage: p.health_percentage
+      };
+    });
+
+    res.status(200).json({message: `✅ You have succesfully logged in with the acount ${userData.username}`, currentUser:{id: userData.id, username: userData.username, coins:userData.coins, team:teamWithHealth } })
 
   } catch (error) {
     res.status(404).json({error: error.message})
