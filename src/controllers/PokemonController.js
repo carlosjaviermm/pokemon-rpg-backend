@@ -7,6 +7,24 @@ const MyPokemon = require('../models/MyPokemon')
 
 const ctr = {};
 
+ctr.GetAllPokemon = () => async (req, res) => {
+  try {
+    const allPokemon = await Pokemon.query().select(
+      'id',
+      'name',
+      'pokedex_number',
+      'front_image',
+      'back_image',
+      'base_damage',
+      'base_health',
+      'b_active'
+    )
+    res.json(allPokemon)
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+}
+
 ctr.Catch = () => async (req, res) => {
   try{
   const { user_id, pokemon_id } = req.body;
