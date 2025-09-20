@@ -25,6 +25,19 @@ ctr.GetAllPokemon = () => async (req, res) => {
   }
 }
 
+ctr.getStarters = () => async (req, res) => {
+  try {
+    // IDs y nombres de tus starters en la DB
+    const starters = await Pokemon.query()
+      .whereIn('name', ['bulbasaur', 'charmander', 'squirtle'])
+      .select('id', 'name');
+
+    res.status(200).json(starters);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 ctr.Catch = () => async (req, res) => {
   try{
   const { user_id, pokemon_id } = req.body;
