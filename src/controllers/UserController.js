@@ -28,6 +28,7 @@ ctr.Signup = () => async (req, res) => {
   if (duplicatedUsername.length > 0) {
 
      return res.status(400).json({ error: 'Username already exists' })
+     
   } else if (duplicatedEmail.length > 0) {
     
     return res.status(400).json({ error: 'Account with this email already exists' })    }
