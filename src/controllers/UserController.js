@@ -1,9 +1,8 @@
 const User = require('../models/User');
 const Pokemon = require('../models/Pokemon')
 const MyPokemon = require('../models/MyPokemon')
-const req = require('express/lib/request');
-const res = require('express/lib/response');
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS || '12', 10)
 
@@ -90,7 +89,16 @@ ctr.logIn = () => async (req, res) => {
       };
     });
 
-    res.status(200).json({message: `✅ You have succesfully logged in with the acount ${userData.username}`, currentUser:{id: userData.id, username: userData.username, coins:userData.coins, team:teamWithHealth } })
+    const token = jwt.sign({
+      id: userData.id,
+      username: userData.username,
+      email: userData.email
+    },
+    'defaultSecret',
+    {expiresIn: '24h'}
+    )
+
+    res.status(200).json({message: `✅ You have succesfully logged in with the acount ${userData.username}`, currentUser:{id: userData.id, username: userData.username, coins:userData.coins, team:teamWithHealth, token }})
 
   } catch (error) {
     res.status(404).json({error: error.message})

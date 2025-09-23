@@ -32,6 +32,7 @@ ctr.getStarters = () => async (req, res) => {
       .whereIn('name', ['bulbasaur', 'charmander', 'squirtle'])
       .select('id', 'name');
 
+      console.log('headers', req.headers)
     res.status(200).json(starters);
   } catch (error) {
     res.status(500).json({ error: error.message });
